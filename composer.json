@@ -1,0 +1,8 @@
+{
+    "require": {
+        "everyman/neo4jphp": "dev-master",
+        "slim/slim": "2.*",
+        "zircote/swagger-php": "^2.0",
+	    "hybridauth/hybridauth": "2.3.0"
+    }
+}

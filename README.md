@@ -5,4 +5,8 @@ This is v2 of the RealQuestions backend operations engine. It is a new build, im
 
 to learn more see our [wiki] (https://github.com/RealQuestions/apiengine-v2/wiki)
 
-* Note please do not use this code on production systems. Not secure or tested. This is pilot code.
+Copy config.inc.sample to config.inc & set the variables
+
+Copy setup.php.sample to setup.php & set the variables - Run this first 
+
+*IMPORTANT NOTE* please do not use this code on production systems. Not secure or tested. This is pilot code.

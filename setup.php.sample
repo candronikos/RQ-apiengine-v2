@@ -1,0 +1,28 @@
+<?php
+
+require('./config.inc');
+
+global $client;
+
+
+/**
+	Setup User & unique constraint on email
+*/
+$user = $client->makeNode();
+
+#CHANGEME: set password
+$hash = password_hash('', PASSWORD_DEFAULT);
+
+#CHANGEME: set username, & email
+$user->setProperty('name', '')
+	->setProperty('email', '')
+	->setProperty('password', $hash)
+	->save();
+
+$userlabel = $client->makeLabel('SiteUsers');
+$node = $client->getNode($user->getID());
+$labels = $node->addLabels(array($userlabel));
+
+$cypherStr = 'CREATE CONSTRAINT ON (n:SiteUsers) Assert n.email is UNIQUE';
+$cypher = new Everyman\Neo4j\Cypher\Query($client, $cypherStr);
+$result = $cypher->getResultSet();
