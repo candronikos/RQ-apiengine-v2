@@ -2,7 +2,12 @@
     "require": {
         "everyman/neo4jphp": "dev-master",
         "slim/slim": "2.*",
-        "zircote/swagger-php": "^2.0",
-	    "hybridauth/hybridauth": "2.3.0"
+    	"vlucas/phpdotenv" : "2.*",
+    	"tuupola/slim-jwt-auth" : "0.4.*",
+	"guzzlehttp/guzzle": "5.3",
+	"monolog/monolog" : "1.16.*",
+    	"squizlabs/php_codesniffer" : "*",
+    	"phpunit/phpunit": "4.8.*",
+	"facebook/php-sdk-v4" : "~5.0"
     }
 }

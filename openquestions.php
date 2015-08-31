@@ -1,63 +1,88 @@
 <?php
 require('./config.inc'); # Neo4j, Slim & config
   
-
 $app = new \Slim\Slim();
 
-$app->get('/hello/', function () use ($app){
+/*$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $FaceBkAccess,
+    "logger" => $log,
+    "secure" => false, // Not on production    
+]));*/
+
+
+$app->get('/:item', function ($item){
+   
+    switch ($item) {
+        case 'all':
+            $content = listquestions();            
+        break;
+    }
+
+    if (isset($content)) {
+	   echo json_encode($content);
+    } else {
+	   echo 'no content';
+	}
+
+}
+
+);
+
+function listquestions() {
 
     global $client;
-    
-    /**
-   
-     */
-    $name = $app->request()->get('name');
-    $queryString = "MATCH (n:SiteUsers) Where n.name = '{$name}' Return n";
-    $query = new Everyman\Neo4j\Cypher\Query($client, $queryString, array('name' => $name));
+
+    $queryString = "MATCH (n:OpenQuestions) RETURN n LIMIT 100";
+    $query = new Everyman\Neo4j\Cypher\Query($client, $queryString);
     $result = $query->getResultSet();
     
     foreach ($result as $key=>$row) {
-	$id = $row['n']->getID(); 	
-	$userarray[$id]['name'] = $row['n']->getProperty('name'); 	
-	$userarray[$id]['email'] = $row['n']->getProperty('email'); 	
-//        print_r ($row['n']);
+	    $title = $row['n']->getProperty('title');
+        $pol[$title]['description'] =  $row['n']->getProperty('description');
+        $pol[$title]['source'] = $row['n']->getProperty('source');
+        $pol[$title]['socialuser'] = $row['n']->getProperty('socialuser');
     }
-    if (isset($userarray)) {
-	   echo json_encode($userarray);
-    } else {
-	   echo $name . ' not registered';
-	}
-
-});
+        return $pol;
+}
 
 
-$app->post('/user/register', function () use ($app) {    
+/** 
+ * 
+ * {"title":"my questionwfqe ","description":"long description", "source":"s", "socialuser": "5578"}
+ * Create a new question
+ */
+$app->post('/new', function () use ($app) {    
   try {
     global $client;
     // get and decode JSON request body
     $request = $app->request();
     $body = $request->getBody();
-    $input = json_decode($body); 
-    
-    $passwordHash = password_hash($input->password, PASSWORD_DEFAULT);
-    // {"name":"username","email":"test@example.com", "password":"password"}
- 
-    $useraccount =  $client->makeNode();
+    $input = json_decode($body);  
 
-    $useraccount->setProperty('name', $input->name)
-        ->setProperty('email', $input->email)
-        ->setProperty('password', $passwordHash)
+    // Create a Question Node
+    $qst = $client->makeNode();
+    $qst->setProperty('title', $input->title) 
+        ->setProperty('description', $input->description)
+        ->setProperty('source', $input->source)
+        ->setProperty('socialuser', $input->socialuser)
         ->save();
 
-$userlabel = $client->makeLabel('SiteUsers');
-$node = $client->getNode($useraccount->getID());
+    $qstid = $qst->getID();
 
-$labels = $node->addLabels(array($userlabel));
+    // Link it to the politician
+/*    $polid = $client->getNode($input->polid);
+    $qst->relateTo($polid, 'Asked_to')
+        ->setProperty('when', date ('c')) 
+        ->save();
+*/
+    $qstlabel = $client->makeLabel('OpenQuestions');
+    $node = $client->getNode($qst->getID());
+    $labels = $node->addLabels(array($qstlabel));
 
     // return JSON-encoded response body
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($input);
-    echo json_encode($useraccount->getID);
+
   } catch (Exception $e) {
         $app->response()->status(400);
         $app->response()->header('X-Status-Reason', $e->getMessage());
@@ -65,24 +90,30 @@ $labels = $node->addLabels(array($userlabel));
 
 });
 
-$app->put('/user/:email', function ($email) use ($app) {
+/** 
+ * 
+ *   Question Interacive feature set
+ * 
+ */
+$app->put('/interact/:id', function ($id) use ($app) {    
   try {
+  
+    echo "NOT READY";
+    exit;
     global $client;
     // get and decode JSON request body
     $request = $app->request();
     $body = $request->getBody();
     $input = json_decode($body); 
     
-    $passwordHash = password_hash($input->password, PASSWORD_DEFAULT);
-    // {"name":"username","email":"test@example.com", "password":"password"}
-
+   
     $cypherStr = "MATCH (n:SiteUsers) where n.email ='{$email}' Return n";
     $cypher = New Everyman\Neo4j\Cypher\Query($client, $cypherStr, array('email' => $email));
     $result = $cypher->getResultSet();
 
     foreach ($result as $key=>$row) {
-	$id = $row['n']->getID();
-	$useraccount =  $client->getNode($id);
+	    $id = $row['n']->getID();
+	    $useraccount =  $client->getNode($id);
     } 
 
     if (isset($useraccount)) {
@@ -107,6 +138,12 @@ $app->put('/user/:email', function ($email) use ($app) {
 
 });
 
+/** 
+ * POST requests to /user/login
+ *
+ * login
+ */
+ /*
 $app->post('/user/', function () use ($app) {    
   try {
     global $client;
@@ -146,6 +183,6 @@ $app->post('/user/', function () use ($app) {
         $app->response()->header('X-Status-Reason', $e->getMessage());
   }
 
-});
+});*/
 
 $app->run();

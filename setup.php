@@ -10,12 +10,10 @@ global $client;
 */
 $user = $client->makeNode();
 
-#CHANGEME: set password
-$hash = password_hash('', PASSWORD_DEFAULT);
+$hash = password_hash('defaultadmin', PASSWORD_DEFAULT);
 
-#CHANGEME: set username, & email
-$user->setProperty('name', '')
-	->setProperty('email', '')
+$user->setProperty('name', 'defaultadmin')
+	->setProperty('email', 'root@localhost.localdomain')
 	->setProperty('password', $hash)
 	->save();
 
