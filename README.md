@@ -18,3 +18,7 @@ Copy setup.php.sample to setup.php & set the variables - Run this first
 
 
 *IMPORTANT NOTE* please do not use this code on production systems. Not secure or tested. This is pilot code.
+Initial code, this is going to change.
+
+These scripts use Cypher queries to connect to neo4j. We are currently in the process of updating them to use gremlin instead. An experimental docker image with the gremlin plugin 7 neo4j, can be found in the dockerimages repository. [neo4k + grelin plugin] (https://github.com/RealQuestions/dockerimages/tree/master/openjdk_neo4j)
+
