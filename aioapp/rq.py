@@ -1,9 +1,12 @@
 import asyncio
 from aiohttp import web
-from politicians import register
+import sys
+from importlib import __import__
 
 app = web.Application()
-politicians = register(app)
+
+cls = __import__(sys.argv[1])
+obj = cls.register(app)
 
 loop = asyncio.get_event_loop()
 handler = app.make_handler()
