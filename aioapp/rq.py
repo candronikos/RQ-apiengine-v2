@@ -1,9 +1,9 @@
 import asyncio
 from aiohttp import web
-from politicians import Politicians
+from politicians import register
 
 app = web.Application()
-politicians = Politicians(app)
+politicians = register(app)
 
 loop = asyncio.get_event_loop()
 handler = app.make_handler()

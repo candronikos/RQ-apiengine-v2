@@ -4,6 +4,9 @@ import asyncio
 from aiohttp import web
 from gremlinclient import AioGremlinClient
 
+def register(*args, **kwargs):
+    return Politicians(*args, **kwargs)
+
 class Politicians():
     def __init__(self, app, url='ws://172.17.0.2:8182'):
         self.client = AioGremlinClient(url=url)
