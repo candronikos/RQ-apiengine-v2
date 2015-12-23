@@ -1,10 +1,17 @@
 import requests
 import sys
 
+url = 'http://0.0.0.0:8080/politicians'
+abbott = {
+        'title':'Treasurer',
+        'firstName':'Tony',
+        'lastName':'Abbott',
+        'state': 'NSW',
+        'postcode': '2154'}
 
-#url = '0.0.0.0:8080/' + sys.argv[1] + '/5'
-url = 'http://0.0.0.0:8080/politicians/5'
+r = requests.post(url, json=abbott)
+print("POST: " + r.text)
 
-req = requests.get(url)
-
-print(req.text)
+params = {'firstName': 'Tony'}
+r = requests.get(url, params=params)
+print("GET: " + r.text)
