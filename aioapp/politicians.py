@@ -4,6 +4,8 @@ import asyncio
 from aiohttp import web
 from gremlinclient import AioGremlinClient
 
+import json
+
 def register(*args, **kwargs):
     return Politicians(*args, **kwargs)
 
@@ -28,4 +30,4 @@ class Politicians():
                 break
             body = msg.data[0]
 
-        return web.Response(body=bytes(str(body), 'utf-8'))
+        return web.Response(body=bytes(json.dumps({"square": int(body)}), 'utf-8'))
